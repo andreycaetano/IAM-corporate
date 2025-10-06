@@ -26,11 +26,7 @@ export const badRequestValidationSchema = {
     message: {
       type: 'array',
       items: { type: 'string' },
-      example: [
-        'O name é obrigatório ',
-        'O name deve ser uma string ',
-        'email must be an email',
-      ],
+      example: ['email must be an email'],
     },
     error: { example: 'Bad Request' },
   },
