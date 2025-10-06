@@ -1,0 +1,54 @@
+services:
+  backend:
+    image: node:22.20-alpine
+    working_dir: /app
+    volumes:
+      - ./:/app
+    ports:
+      - "3000:3000"
+    environment:
+      - DB_HOST=database
+      - DB_USERNAME=root
+      - DB_PASSWORD=root
+      - DB_PORT=5432
+      - DB_DATABASE=iam-db
+    command: sh -c "npm install -g @nestjs/cli && npm install && npm run start:dev"
+    depends_on:
+      database:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
+    develop:
+      watch:
+        - path: ./
+          target: /app/src
+          action: sync
+
+  database:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: iam-db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgDataIamDb:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U root -d iam-db" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+      restart: unless-stopped
+
+volumes:
+  pgDataIamDb:
