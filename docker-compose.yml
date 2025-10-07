@@ -7,11 +7,20 @@ services:
     ports:
       - "3000:3000"
     environment:
+      - RABBITMQ_URL=amqp://user:password@rabbitmq:5672
+      - RABBITMQ_QUEUE=iam-queue
+
+      - JWT_SECRET=secret
+
+      - GOOGLE_CLIENT_ID=teste
+      - GOOGLE_CLIENT_SECRET=teste
+      - GOOGLE_CALLBACK_URL=teste
+
       - DB_HOST=database
       - DB_USERNAME=root
       - DB_PASSWORD=root
       - DB_PORT=5432
-      - DB_DATABASE=iam-db
+      - DB_NAME=iam-db
     command: sh -c "npm install -g @nestjs/cli && npm install && npm run start:dev"
     depends_on:
       database:

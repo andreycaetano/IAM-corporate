@@ -3,21 +3,24 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  OneToMany,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  Unique,
 } from 'typeorm';
-import { Role } from '@/roles/entities/role.entity';
+import { System } from '@/system/entities/system.entity';
 
 @Entity()
-export class System {
+@Unique(['system', 'name'])
+export class Role {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ type: 'varchar', length: 255 })
   name: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'varchar', length: 255 })
   description: string;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
@@ -29,6 +32,7 @@ export class System {
   @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp' })
   deletedAt: Date;
 
-  @OneToMany(() => Role, (role) => role.system)
-  roles: Role[];
+  @JoinColumn()
+  @ManyToOne(() => System, (system) => system.roles)
+  system: System;
 }
